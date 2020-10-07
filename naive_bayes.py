@@ -117,7 +117,7 @@ def bigramBayes(train_set, train_labels, dev_set, unigram_smoothing_parameter=1.
         else:
             predictions.append(comboNeg)
         '''
-        combo = (1 - bigram_lambda) * uni[x] + bigram_lambda * bi[x]
+        combo = (1 - .05 * bigram_lambda) * uni[x] + .05 * bigram_lambda * bi[x]
         predictions.append(combo)
 
     return predictions
