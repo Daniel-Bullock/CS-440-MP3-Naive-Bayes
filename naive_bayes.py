@@ -106,15 +106,19 @@ def bigramBayes(train_set, train_labels, dev_set, unigram_smoothing_parameter=1.
     predictions = []
     trainingPairs = pairUp(train_set)
     devPairs = pairUp(dev_set)
-    uni = naiveBayes(trainingPairs, train_labels, devPairs, unigram_smoothing_parameter, pos_prior=0.8)
-    bi = naiveBayes(trainingPairs, train_labels, devPairs, bigram_smoothing_parameter, pos_prior=0.8)
+    uni = naiveBayes(trainingPairs, train_labels, devPairs, unigram_smoothing_parameter, pos_prior)
+    bi = naiveBayes(trainingPairs, train_labels, devPairs, bigram_smoothing_parameter, pos_prior)
     for x in range(len(bi)):
+        '''
         comboPos = (1 - bigram_lambda) * uni[x][0] + bigram_lambda * bi[x][0]
         comboNeg = (1 - bigram_lambda) * uni[x][1] + bigram_lambda * bi[x][1]
         if comboPos > comboNeg:
             predictions.append(comboPos)
         else:
             predictions.append(comboNeg)
+        '''
+        combo = (1 - bigram_lambda) * uni[x] + bigram_lambda * bi[x]
+        predictions.append(combo)
 
     return predictions
 
