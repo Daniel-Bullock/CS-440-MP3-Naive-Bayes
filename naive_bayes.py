@@ -83,7 +83,7 @@ def naiveBayes(train_set, train_labels, dev_set, smoothing_parameter=1.0, pos_pr
 
 
 def bigramBayes(train_set, train_labels, dev_set, unigram_smoothing_parameter=1.0, bigram_smoothing_parameter=1.0,
-                bigram_lambda=0.5, pos_prior=0.8):
+                bigram_lambda=0.05, pos_prior=0.8):
     """
     train_set - List of list of words corresponding with each movie review
     example: suppose I had two reviews 'like this movie' and 'i fall asleep' in my training set
@@ -117,7 +117,7 @@ def bigramBayes(train_set, train_labels, dev_set, unigram_smoothing_parameter=1.
         else:
             predictions.append(comboNeg)
         '''
-        combo = (1 - .05 * bigram_lambda) * uni[x] + .05 * bigram_lambda * bi[x]
+        combo = (1 - bigram_lambda) * uni[x] + bigram_lambda * bi[x]
         predictions.append(combo)
 
     return predictions
