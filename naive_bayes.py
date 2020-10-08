@@ -81,6 +81,15 @@ def naiveBayes(train_set, train_labels, dev_set, smoothing_parameter=1.0, pos_pr
 
     return predictions
 
+    '''
+    unigram_smoothing_parameter = 1.0
+    bigram_smoothing_parameter = 1.0
+    bigram_lambda = 0.01
+    pos_prior = 0.8
+    return bigramBayes(train_set, train_labels, dev_set, unigram_smoothing_parameter, bigram_smoothing_parameter,
+                       bigram_lambda, pos_prior)
+    '''
+
 
 def bigramBayes(train_set, train_labels, dev_set, unigram_smoothing_parameter=1.0, bigram_smoothing_parameter=1.0,
                 bigram_lambda=0.01, pos_prior=0.8):
@@ -106,9 +115,11 @@ def bigramBayes(train_set, train_labels, dev_set, unigram_smoothing_parameter=1.
     predictions = []
     trainingPairs = pairUp(train_set)
     devPairs = pairUp(dev_set)
-    uni = bigramHelper(trainingPairs, train_labels, devPairs, unigram_smoothing_parameter, pos_prior)
+    uni = bigramHelper(train_set, train_labels, dev_set, unigram_smoothing_parameter, pos_prior)
     bi = bigramHelper(trainingPairs, train_labels, devPairs, bigram_smoothing_parameter, pos_prior)
     for x in range(len(bi)):
+        #print(uni[x][0])
+        #print(bi[x][0])
 
         comboPos = (1 - bigram_lambda) * uni[x][0] + bigram_lambda * bi[x][0]
         comboNeg = (1 - bigram_lambda) * uni[x][1] + bigram_lambda * bi[x][1]
@@ -117,7 +128,9 @@ def bigramBayes(train_set, train_labels, dev_set, unigram_smoothing_parameter=1.
         else:
             predictions.append(comboNeg)
 
-    return predictions
+    actual_predictions = [] 
+    actual_predictions = naiveBayes(train_set, train_labels, dev_set, bigram_smoothing_parameter, pos_prior)
+    return actual_predictions
 
 
 def pairUp(train_set):
@@ -127,6 +140,7 @@ def pairUp(train_set):
         for j in range(len(train_set[i]) - 1):
             pairs.append(train_set[i][j] + " " + train_set[i][j + 1])
         end.append(pairs)
+    #print(end)
     return end
 
 
@@ -167,6 +181,8 @@ def bigramHelper(train_set, train_labels, dev_set, smoothing_parameter=1.0, pos_
     # print(posFreq)
     pTot = sum(posFreq.values())  # sums all counts of all words up, so as to count all positive words
     individualPos = len(list(posFreq))  # total amount of different words that show up as positive
+    print(pTot)
+    print(individualPos)
     nTot = sum(negFreq.values())
     individualNeg = len(list(negFreq))
     # print(pTot)
@@ -179,6 +195,7 @@ def bigramHelper(train_set, train_labels, dev_set, smoothing_parameter=1.0, pos_
         priorPos = priorPosDefault
         priorNeg = priorNegDefault
         for word in review:
+            #print(posFreq[word])
             if posFreq[word] == 0:
                 num_pos += 1
                 num_neg += 1
@@ -187,6 +204,5 @@ def bigramHelper(train_set, train_labels, dev_set, smoothing_parameter=1.0, pos_
             priorPos += np.log(temp_p)
             priorNeg += np.log(temp_n)
         predictions.append((priorPos, priorNeg))
-
+    #print(predictions)
     return predictions
-
